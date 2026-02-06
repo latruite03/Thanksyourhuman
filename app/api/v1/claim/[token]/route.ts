@@ -166,8 +166,11 @@ export async function POST(
       .eq('id', gift.id);
 
     // TODO: Create Shopify draft order and get Gipht checkout URL
-    // For now, return a placeholder
-    const checkoutUrl = `/checkout/${gift.id}`;
+    // For now, return a configurable placeholder
+    const baseUrl = process.env.GIPHT_CHECKOUT_BASE_URL;
+    const checkoutUrl = baseUrl
+      ? `${baseUrl}?gift_id=${gift.id}`
+      : `/checkout/${gift.id}`;
 
     return NextResponse.json({
       success: true,

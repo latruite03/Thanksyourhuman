@@ -45,8 +45,28 @@ export default function ClaimPage() {
   }, [token]);
 
   const handleAccept = async () => {
-    // TODO: Redirect to Shopify/Gipht checkout with address collection
-    setResponse('accepted');
+    try {
+      const res = await fetch(`/api/v1/claim/${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'accept' }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Failed to process response');
+        return;
+      }
+
+      setResponse('accepted');
+
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      }
+    } catch {
+      setError('Failed to process response');
+    }
   };
 
   const handleDecline = async () => {
